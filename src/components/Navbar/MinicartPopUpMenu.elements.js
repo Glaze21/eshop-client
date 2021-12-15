@@ -5,7 +5,6 @@ export const Container = styled.div`
   top: 80px;
   right: 80px;
   background-color: white;
-  filter: drop-shadow(0px 4px 35px rgba(168, 172, 176, 0.19));
   width: 325px;
   height: 540px;
   z-index: 5;
