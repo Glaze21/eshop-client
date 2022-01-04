@@ -37,13 +37,14 @@ export const setAllCategories = () => async (dispatch) => {
   });
 };
 
-export const setAllProducts = (cat) => async (dispatch) => {
+export const setAllProducts = (cat, history) => async (dispatch) => {
   const query = new Query("category")
     .addArgument("input", "CategoryInput", { title: cat })
     .addField("name")
     .addField(
       new Field("products")
         .addField("id")
+        .addField("brand")
         .addField("name")
         .addField("inStock")
         .addField("gallery")
@@ -51,11 +52,17 @@ export const setAllProducts = (cat) => async (dispatch) => {
     );
   const queryResult = await client.post(query);
 
+  if (queryResult.category === null) {
+    throw new Error("Category is null");
+  }
+
   var data = [];
+
   for (const product of queryResult.category.products) {
     data.push({
       id: product.id,
       name: product.name,
+      brand: product.brand,
       prices: product.prices,
       picture: product.gallery[0],
       inStock: product.inStock,
@@ -97,27 +104,27 @@ export const setProduct = (id) => async (dispatch) => {
   });
 };
 
-export const addToCart = (item, increase) => (dispatch, getState) => {
+export const resetProduct = () => (dispatch) => {
+  dispatch({
+    type: "RESET_PRODUCT",
+  });
+};
+
+export const addToCart = (item) => (dispatch, getState) => {
   var data = [];
-  var total = [];
   var newItem = true;
-  var removeItem = false;
 
   getState().root.cart.forEach((_item) => {
-    if (_item.id === item.id) {
-      if (increase) {
-        _item.amount += 1;
-      } else if (increase === false && item.amount > 1) {
-        _item.amount -= 1;
-      } else if (increase === false && item.amount === 1) {
-        removeItem = true;
-      }
+    if (
+      _item.id === item.id &&
+      JSON.stringify(_item.selectedAttributes) ===
+        JSON.stringify(item.selectedAttributes)
+    ) {
+      _item.amount += 1;
       newItem = false;
     }
-    if (!removeItem) {
-      data.push(_item);
-    }
-    removeItem = false;
+
+    data.push(_item);
   });
   if (newItem) {
     data.push(item);
@@ -127,21 +134,80 @@ export const addToCart = (item, increase) => (dispatch, getState) => {
     type: "ADD_TO_CART",
     payload: data,
   });
+};
 
-  if (data.length > 0) {
-    data[0].prices.forEach((price) => {
-      total.push({ currency: price.currency, amount: 0 });
-    });
-    data.forEach((_item) => {
-      _item.prices.forEach((price) => {
-        var index = total.findIndex((i) => i.currency === price.currency);
-        total[index].amount += price.amount * _item.amount;
-      });
-    });
-  }
+export const removeFromCart = (item) => (dispatch, getState) => {
+  var data = [];
+  var removeItem = false;
+
+  getState().root.cart.forEach((_item) => {
+    if (
+      _item.id === item.id &&
+      JSON.stringify(_item.selectedAttributes) ===
+        JSON.stringify(item.selectedAttributes)
+    ) {
+      if (item.amount > 1) {
+        _item.amount -= 1;
+      } else if (item.amount === 1) {
+        removeItem = true;
+      }
+    }
+    if (!removeItem) {
+      data.push(_item);
+    }
+    removeItem = false;
+  });
 
   dispatch({
-    type: "ADD_TO_CART_TOTAL",
-    payload: total,
+    type: "ADD_TO_CART",
+    payload: data,
   });
+};
+
+export const changeAttribute = (oldItem, newItem) => (dispatch, getState) => {
+  var obj = checkForDuplicates(newItem, getState().root.cart);
+  var data = [];
+
+  if (obj.isDuplicate) {
+    data.push(obj.newItem);
+  }
+
+  getState().root.cart.forEach((_item) => {
+    if (
+      _item.id === oldItem.id &&
+      JSON.stringify(_item.selectedAttributes) ===
+        JSON.stringify(oldItem.selectedAttributes)
+    ) {
+      if (!obj.isDuplicate) {
+        data.push(newItem);
+      }
+    } else {
+      data.push(_item);
+    }
+  });
+
+  dispatch({
+    type: "ADD_TO_CART",
+    payload: data,
+  });
+};
+
+const checkForDuplicates = (newItem, cart) => {
+  var isDuplicate = false;
+  var multipleItemArr = [];
+  cart.forEach((_item) => {
+    if (
+      _item.id === newItem.id &&
+      JSON.stringify(_item.selectedAttributes) ===
+        JSON.stringify(newItem.selectedAttributes)
+    ) {
+      multipleItemArr.push(_item);
+    }
+  });
+  if (multipleItemArr.length > 1) {
+    isDuplicate = true;
+    multipleItemArr[0].amount += multipleItemArr[1].amount;
+    newItem.amount = multipleItemArr[0].amount;
+  }
+  return { isDuplicate, newItem };
 };

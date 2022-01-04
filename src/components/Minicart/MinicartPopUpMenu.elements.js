@@ -55,7 +55,7 @@ export const ListItem = styled.li`
     justify-content: space-between;
   }
   .price {
-    margin: 5px 0 0 0;
+    margin: 5px 0 16px 0;
     font-family: Raleway;
     font-style: normal;
     font-weight: 500;
@@ -88,9 +88,11 @@ export const ListItem = styled.li`
     }
   }
 
+  .img-container {
+    display: contents;
+  }
   img {
     width: 105px;
-    height: 100px;
     object-fit: contain;
   }
 `;
@@ -113,6 +115,10 @@ export const TopContainer = styled.div`
       margin-left: 6px;
       font-weight: 500;
     }
+  }
+
+  .white-space {
+    flex: 1;
   }
 `;
 
@@ -177,4 +183,66 @@ export const ButtonContainer = styled.div`
     background: #5ece7b;
     color: #ffffff;
   }
+`;
+
+export const AttributeContainer = styled.div`
+  padding-bottom: 5px;
+  :last-child {
+    padding-bottom: 0;
+  }
+
+  > div {
+    display: flex;
+  }
+
+  p {
+    text-transform: uppercase;
+    font-family: Roboto Condensed;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    color: #1d1f22;
+    margin: 0;
+  }
+`;
+
+const SizeBox = styled.div.attrs((props) => ({
+  active: props.active,
+  color: props.color,
+}))`
+  display: flex;
+  width: 28px;
+  height: 28px;
+  margin: 2px;
+  cursor: pointer;
+  text-align: center;
+  p {
+    margin: auto;
+    font-family: Source Sans Pro;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 10px;
+  }
+  border: 1px solid #1d1f22;
+`;
+
+export const SizeBoxText = styled(SizeBox).attrs((props) => ({
+  active: props.active,
+}))`
+  background-color: ${(props) => (props.active === "true" ? "black" : "white")};
+  p {
+    color: ${(props) => (props.active === "true" ? "white" : "#292929")};
+  }
+`;
+
+export const SizeBoxSwatch = styled(SizeBox).attrs((props) => ({
+  active: props.active,
+  color: props.color,
+}))`
+  width: 20px;
+  height: 20px;
+  box-shadow: ${(props) =>
+    props.active === "true" && "0px 0px 1px 1px rgba(0, 0, 0, 0.5)"};
+  border: ${(props) => props.active === "true" && "1px solid black"};
+  background-color: ${(props) => props.color};
 `;

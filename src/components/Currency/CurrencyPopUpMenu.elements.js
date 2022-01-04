@@ -18,5 +18,8 @@ export const List = styled.ul`
 
 export const ListItem = styled.li`
   cursor: pointer;
-  padding: 0 0 12px 0;
+  margin: 0 0 12px 0;
+  :hover {
+    color: #5ece7b;
+  }
 `;

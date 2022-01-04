@@ -41,6 +41,11 @@ export default function appReducer(state = initialState, action) {
         ...state,
         product: action.payload,
       };
+    case "RESET_PRODUCT":
+      return {
+        ...state,
+        product: null,
+      };
     case "ADD_TO_CART":
       return {
         ...state,

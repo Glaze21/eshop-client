@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  margin: 80px 0 60px 10%;
-  width: 65%;
+  padding: 80px 0 60px 10%;
+  width: 70%;
   .title {
     margin: 0;
     text-align: start;
@@ -32,6 +32,11 @@ export const ListItem = styled.li`
   }
 
   > div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .right-container {
     display: flex;
   }
 

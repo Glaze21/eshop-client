@@ -14,31 +14,40 @@ import {
   setCategory,
 } from "../../redux/actions";
 import { connect } from "react-redux";
-import CurrencyPopUpMenu from "./CurrencyPopUpMenu";
-import MinicartPopUpMenu from "./MinicartPopUpMenu";
+import CurrencyPopUpMenu from "../Currency/CurrencyPopUpMenu";
+import MinicartPopUpMenu from "../Minicart/MinicartPopUpMenu";
 import getCurrencySign from "../../util/currencies";
+import getCartQuantity from "../../util/cartQuantity";
 
 export class Header extends Component {
-  state = {
-    currencyPopUpMenu: false,
-    minicartPopUpMenu: false,
-    activeCategory: "",
-    amountOfItems: 0,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      currencyPopUpMenu: false,
+      minicartPopUpMenu: false,
+      activeCategory: "",
+      amountOfItems: 0,
+    };
+    this.backdropRef = React.createRef();
+
+    this.setCurrencyPopUpMenu = this.setCurrencyPopUpMenu.bind(this);
+    this.setMinicartPopUpMenu = this.setMinicartPopUpMenu.bind(this);
+    this.handleChangeCategory = this.handleChangeCategory.bind(this);
+  }
 
   componentDidMount() {
     this.props.setAllCurrencies();
     this.props.setAllCategories();
   }
 
-  setCurrencyPopUpMenu = () => {
+  setCurrencyPopUpMenu() {
     this.setState((prevState) => ({
       currencyPopUpMenu: !prevState.currencyPopUpMenu,
     }));
-  };
+  }
 
-  setMinicartPopUpMenu = () => {
-    var element = document.getElementById("backdrop");
+  setMinicartPopUpMenu() {
+    var element = this.backdropRef.current;
     if (!this.state.minicartPopUpMenu) {
       element.style.display = "block";
     } else {
@@ -47,16 +56,18 @@ export class Header extends Component {
     this.setState((prevState) => ({
       minicartPopUpMenu: !prevState.minicartPopUpMenu,
     }));
-  };
+  }
 
-  handleChangeCategory(e, category) {
+  handleChangeCategory(category) {
     this.props.setCategory(category);
   }
 
   render() {
     const { categories, activeCategory, activeCurrency, cart } = this.props;
+    const { currencyPopUpMenu, minicartPopUpMenu } = this.state;
     return (
       <Nav>
+        <div className="backdrop" ref={this.backdropRef} />
         <div>
           <NavMenu>
             {categories &&
@@ -66,7 +77,7 @@ export class Header extends Component {
                   to={`/${category}`}
                   key={key}
                   active={(category === activeCategory).toString()}
-                  onClick={(e) => this.handleChangeCategory(e, category)}
+                  onClick={this.handleChangeCategory.bind(this, category)}
                 >
                   {category}
                 </NavBtn>
@@ -76,27 +87,29 @@ export class Header extends Component {
           <NavMenu>
             <CurrencyContainer
               onClick={this.setCurrencyPopUpMenu}
-              active={this.state.currencyPopUpMenu.toString()}
+              active={currencyPopUpMenu.toString()}
             >
               {getCurrencySign(activeCurrency) + " " + activeCurrency}
               <img src="/arrow.svg" alt="" />
             </CurrencyContainer>
             <CartContainer
               onClick={this.setMinicartPopUpMenu}
-              active={this.state.minicartPopUpMenu.toString()}
+              active={minicartPopUpMenu.toString()}
             >
               <img src="/empty-cart.svg" alt="cart" />
-              {cart.length > 0 && <p key={cart[0].id}>{cart.length}</p>}
+              {cart.length > 0 && (
+                <p key={cart[0].id}>{getCartQuantity(cart)}</p>
+              )}
             </CartContainer>
-            {this.state.currencyPopUpMenu && (
+            {currencyPopUpMenu && (
               <>
-                <CurrencyPopUpMenu />
+                <CurrencyPopUpMenu onItemClick={this.setCurrencyPopUpMenu} />
                 <ModalBackdrop onClick={this.setCurrencyPopUpMenu} />
               </>
             )}
-            {this.state.minicartPopUpMenu && (
+            {minicartPopUpMenu && (
               <>
-                <MinicartPopUpMenu />
+                <MinicartPopUpMenu onItemClick={this.setMinicartPopUpMenu} />
                 <ModalBackdrop onClick={this.setMinicartPopUpMenu} />
               </>
             )}

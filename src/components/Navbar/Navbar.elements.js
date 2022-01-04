@@ -13,6 +13,18 @@ export const Nav = styled.nav`
     transition: top 0.4s ease 0s;
     z-index: 4;
   }
+
+  .backdrop {
+    position: absolute;
+    height: 1px;
+    min-height: calc(100% - 80px);
+    width: 100%;
+    padding: 0;
+    top: 80px;
+    z-index: 2;
+    background: rgba(57, 55, 72, 0.22);
+    display: none;
+  }
 `;
 
 export const NavMenu = styled.div`
