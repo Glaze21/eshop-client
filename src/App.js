@@ -6,7 +6,7 @@ import { client } from "@tilework/opus";
 import Product from "./pages/Product/Product";
 import Cart from "./pages/Cart/Cart";
 
-client.setEndpoint("http://localhost:4000");
+client.setEndpoint("https://eshop-654.herokuapp.com/");
 
 class App extends React.Component {
   render() {
