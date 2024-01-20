@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setCategory,
   setAllProducts,
@@ -10,37 +10,32 @@ import ProductCard from "./ProductCard";
 import getCurrencySign from "../../util/currencies";
 import getPriceAmount from "../../util/amounts";
 
-//CSS
 import { Category, Container } from "./ProductList.elements";
 
-export class ProductList extends Component {
-  constructor(props) {
-    super(props);
-    this.handleAddToCart = this.handleAddToCart.bind(this);
-  }
+const ProductList = ({ match, history }) => {
+  const dispatch = useDispatch();
+  const { categories, activeCategory, activeCurrency, productList, product } =
+    useSelector((state) => state.root);
 
-  componentDidMount() {
-    this.props.setCategory(this.props.match.params.category);
-    this.props
-      .setAllProducts(this.props.match.params.category, this.props.history)
-      .catch(() => {
-        this.props.history.push(this.props.categories[0]);
-      });
-  }
-  componentDidUpdate(prevProps) {
-    if (this.props.match.params.category !== prevProps.match.params.category) {
-      this.props.setAllProducts(this.props.activeCategory).catch(() => {
-        // If something went wrong (most likely wrong category in URL), then push to the first available category and try displaying products again
-        this.props.history.push(this.props.categories[0]);
-        this.props.setCategory(this.props.match.params.category);
-        this.props.setAllProducts(this.props.activeCategory);
+  useEffect(() => {
+    dispatch(setCategory(match.params.category));
+    dispatch(setAllProducts(match.params.category, history)).catch(() => {
+      history.push(categories[0]);
+    });
+  }, [dispatch, match.params.category, history, categories]);
+
+  useEffect(() => {
+    if (match.params.category !== activeCategory) {
+      dispatch(setAllProducts(activeCategory)).catch(() => {
+        history.push(categories[0]);
+        dispatch(setCategory(match.params.category));
+        dispatch(setAllProducts(activeCategory));
       });
     }
-  }
+  }, [dispatch, match.params.category, activeCategory, history, categories]);
 
-  handleAddToCart(productId) {
-    this.props.setProduct(productId).then(() => {
-      const { product } = this.props;
+  const handleAddToCart = (productId) => {
+    dispatch(setProduct(productId)).then(() => {
       if (product.inStock) {
         const attributes = {};
         product.attributes.forEach((attribute) => {
@@ -57,50 +52,32 @@ export class ProductList extends Component {
           selectedAttributes: attributes,
           prices: product.prices,
         };
-        this.props.addToCart(data);
+        dispatch(addToCart(data));
       }
     });
-  }
+  };
 
-  render() {
-    const { activeCategory, activeCurrency, productList } = this.props;
-    return (
-      <Container>
-        <div>
-          <Category>{activeCategory}</Category>
-          <div className="flex-container">
-            {productList.map((product, key) => (
-              <ProductCard
-                product={product}
-                key={key}
-                price={
-                  getCurrencySign(activeCurrency) +
-                  " " +
-                  getPriceAmount(product.prices, activeCurrency)
-                }
-                onHandleAddToCart={this.handleAddToCart}
-              />
-            ))}
-          </div>
+  return (
+    <Container>
+      <div>
+        <Category>{activeCategory}</Category>
+        <div className="flex-container">
+          {productList.map((product, key) => (
+            <ProductCard
+              product={product}
+              key={key}
+              price={
+                getCurrencySign(activeCurrency) +
+                " " +
+                getPriceAmount(product.prices, activeCurrency)
+              }
+              onHandleAddToCart={handleAddToCart}
+            />
+          ))}
         </div>
-      </Container>
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  categories: state.root.categories,
-  activeCategory: state.root.activeCategory,
-  activeCurrency: state.root.activeCurrency,
-  productList: state.root.productList,
-  product: state.root.product,
-});
-
-const mapActionsToProps = {
-  setAllProducts: setAllProducts,
-  setCategory: setCategory,
-  addToCart: addToCart,
-  setProduct: setProduct,
+      </div>
+    </Container>
+  );
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(ProductList);
+export default ProductList;

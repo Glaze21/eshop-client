@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Container, List } from "./Cart.elements";
 import {
   addToCart,
@@ -10,62 +10,47 @@ import CartItem from "./CartItem";
 import getCurrencySign from "../../util/currencies";
 import getPriceAmount from "../../util/amounts";
 
-export class Cart extends Component {
-  constructor(props) {
-    super(props);
-    this.handleAmount = this.handleAmount.bind(this);
-    this.setActiveAttribute = this.setActiveAttribute.bind(this);
-  }
+const Cart = () => {
+  const dispatch = useDispatch();
+  const { cart, activeCurrency } = useSelector((state) => state.root);
 
-  handleAmount = (item, increase) => {
+  const handleAmount = (item, increase) => {
     if (increase) {
-      this.props.addToCart(item);
+      dispatch(addToCart(item));
     } else {
-      this.props.removeFromCart(item);
+      dispatch(removeFromCart(item));
     }
   };
 
-  setActiveAttribute(item, name, value) {
-    let newItem = item;
-    newItem.selectedAttributes[name] = value;
-    this.props.changeAttribute(item, newItem);
-  }
+  const setActiveAttribute = (item, name, value) => {
+    let newItem = {
+      ...item,
+      selectedAttributes: { ...item.selectedAttributes, [name]: value },
+    };
+    dispatch(changeAttribute(item, newItem));
+  };
 
-  render() {
-    const { cart, activeCurrency } = this.props;
-    return (
-      <Container>
-        <div>
-          <p className="title">Cart</p>
-          <List>
-            {cart.map((item, key) => (
-              <CartItem
-                item={item}
-                key={key}
-                price={
-                  getCurrencySign(activeCurrency) +
-                  getPriceAmount(item.prices, activeCurrency)
-                }
-                onHandleAmount={this.handleAmount}
-                onSetActiveAttribute={this.setActiveAttribute}
-              />
-            ))}
-          </List>
-        </div>
-      </Container>
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  cart: state.root.cart,
-  activeCurrency: state.root.activeCurrency,
-});
-
-const mapActionsToProps = {
-  addToCart: addToCart,
-  removeFromCart: removeFromCart,
-  changeAttribute: changeAttribute,
+  return (
+    <Container>
+      <div>
+        <p className="title">Cart</p>
+        <List>
+          {cart.map((item, key) => (
+            <CartItem
+              item={item}
+              key={key}
+              price={
+                getCurrencySign(activeCurrency) +
+                getPriceAmount(item.prices, activeCurrency)
+              }
+              onHandleAmount={handleAmount}
+              onSetActiveAttribute={setActiveAttribute}
+            />
+          ))}
+        </List>
+      </div>
+    </Container>
+  );
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(Cart);
+export default Cart;
