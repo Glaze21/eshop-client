@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import { Category, Container } from './ProductList.elements';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { setCategory } from '../../redux/reducers/appReducer';
 
 const ProductList = () => {
     const dispatch = useAppDispatch();
@@ -13,11 +14,14 @@ const ProductList = () => {
     const category = useParams();
 
     useEffect(() => {
-        //dispatch(setCategory(category));
-        //dispatch(setAllProducts(category, window.history)).catch(() => {
+        console.log(category);
+        console.log(categories);
+        // dispatch(setCategory(category));
+        // dispatch(setAllProducts(category, window.history)
+        // dispatch(setAllProducts(category, window.history)).catch(() => {
         // window.history.go(categories[0]);
         // });
-    }, [category, categories]);
+    }, [category]);
 
     useEffect(() => {
         // if (category !== activeCategory) {
@@ -27,7 +31,7 @@ const ProductList = () => {
         //         dispatch(setAllProducts(activeCategory));
         //     });
         // }
-    }, [category, activeCategory, categories]);
+    }, []);
 
     const getPrice = (): string => {
         return `${getCurrencySign(activeCurrency)} ${getPriceAmount(product.prices, activeCurrency)}`;

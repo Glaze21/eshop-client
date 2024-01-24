@@ -1,20 +1,24 @@
-import { Tuple, configureStore } from "@reduxjs/toolkit";
-import { thunk } from "redux-thunk";
-import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore } from "redux-persist";
-import rootReducer from "./reducers/rootReducer";
+import { Middleware, configureStore } from '@reduxjs/toolkit';
+import storage from 'redux-persist/lib/storage';
+import { persistReducer, persistStore } from 'redux-persist';
+import rootReducer from './reducers/rootReducer';
+import { apiSlice } from './apiSlice';
 
 const persistConfig = {
-  key: "root",
-  storage,
+    key: 'root',
+    storage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer,
-  devTools: process.env.NODE_ENV !== "production",
-  middleware: () => new Tuple(thunk),
+    reducer: persistedReducer,
+    devTools: process.env.NODE_ENV !== 'production',
+    middleware: (getDefaultMiddleware) => {
+        const defaultMiddleware = getDefaultMiddleware<ReturnType<typeof store.getState>>();
+        const apiMiddleware: Middleware = apiSlice.middleware;
+        return defaultMiddleware.concat(apiMiddleware);
+    },
 });
 
 export const persistor = persistStore(store);

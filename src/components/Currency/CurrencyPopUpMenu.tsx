@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const CurrencyPopUpMenu = ({ onItemClick }) => {
     const dispatch = useAppDispatch();
-    const currencies = useAppSelector((state: any) => state.root.currencies);
+    const currencies = useAppSelector((state) => state.app.currencies);
 
     const handleClick = (currency: string): void => {
         // dispatch(setCurrency(currency));

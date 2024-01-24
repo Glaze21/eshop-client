@@ -1,14 +1,10 @@
 import { Query } from '@tilework/opus';
-import { createAction } from '@reduxjs/toolkit';
+import { getAllCurrencies } from './apiSlice';
 
-export const getAllCurrencies = createAction('api/getAllCurrencies', () => {
+export const getAllCurrencies$ = (dispatch) => {
     const query = new Query('currencies', true);
-    return {
-        payload: {
-            query,
-        },
-    };
-});
+    dispatch(getAllCurrencies.initiate(query));
+};
 
 // export const setCurrency = (curr: string) => async (dispatch: (arg0: { type: string; payload: string }) => void) => {
 //     dispatch({

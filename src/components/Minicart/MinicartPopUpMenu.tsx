@@ -35,7 +35,7 @@ const MinicartPopUpMenu = ({ onItemClick }) => {
             <div>
                 <TopContainer>
                     <div className="title-container">
-                        <p className="my-bag">My Bag,</p> <p className="items">2 items</p>
+                        <p className="my-bag">My Bag,</p> <p className="items">{cart.length} items</p>
                     </div>
                     <List>
                         {cart.map((item, key) => (

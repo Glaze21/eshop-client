@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Nav, NavBtn, NavMenu, NavLogo, CurrencyContainer, CartContainer, ModalBackdrop } from './Navbar.elements';
-import { getAllCurrencies } from '../../redux/actions';
+import { getAllCurrencies$ } from '../../redux/actions';
 import CurrencyPopUpMenu from '../Currency/CurrencyPopUpMenu';
 import MinicartPopUpMenu from '../Minicart/MinicartPopUpMenu';
 import getCurrencySign from '../../util/currencies';
@@ -16,9 +16,9 @@ const Header = () => {
     const backdropRef = useRef(null);
 
     useEffect(() => {
-        dispatch(getAllCurrencies());
+        getAllCurrencies$(dispatch);
         //dispatch(setAllCategories());
-    }, [dispatch]);
+    }, []);
 
     const toggleCurrencyPopUpMenu = () => {
         setCurrencyPopUpMenu(!currencyPopUpMenu);
