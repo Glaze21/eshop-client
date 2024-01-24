@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import { setProduct, addToCart, resetProduct } from "../../redux/actions";
 import getCurrencySign from "../../util/currencies";
 import getPriceAmount from "../../util/amounts";
 import DOMPurify from "dompurify";
+import { useParams } from "react-router-dom";
 
-// CSS
 import {
   Container,
   LeftContainer,
@@ -14,15 +13,18 @@ import {
   AddToCartBtn,
 } from "./Product.element";
 import Attribute from "./Attribute";
+import React = require("react");
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
-const ProductPage = ({ match, history }) => {
-  const dispatch = useDispatch();
-  const { activeCurrency, product } = useSelector((state) => state.root);
+const ProductPage = () => {
+  const dispatch = useAppDispatch();
+  const { activeCurrency, product } = useAppSelector((state) => state.root);
   const [attributes, setAttributes] = useState({});
   const [selectedImg, setSelectedImg] = useState(0);
+  const productId = useParams();
 
   useEffect(() => {
-    dispatch(setProduct(match.params.id))
+    dispatch(setProduct(productId))
       .then(() => {
         const initialAttributes = {};
         product.attributes.forEach((attribute) => {
@@ -31,13 +33,13 @@ const ProductPage = ({ match, history }) => {
         setAttributes(initialAttributes);
       })
       .catch(() => {
-        history.replace("/");
+        window.history.replace("/");
       });
 
     return () => {
       dispatch(resetProduct());
     };
-  }, [dispatch, match.params.id, history]);
+  }, [dispatch, productId, window.history]);
 
   const handleChange = (value) => {
     setSelectedImg(value);
@@ -64,7 +66,7 @@ const ProductPage = ({ match, history }) => {
   };
 
   return (
-    <div>
+    <React.Fragment>
       {product && (
         <Container>
           <div>
@@ -123,7 +125,7 @@ const ProductPage = ({ match, history }) => {
           </div>
         </Container>
       )}
-    </div>
+    </React.Fragment>
   );
 };
 

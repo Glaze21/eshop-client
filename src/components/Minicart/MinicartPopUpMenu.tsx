@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
   removeFromCart,
@@ -17,10 +16,11 @@ import {
   TopContainer,
   ButtonContainer,
 } from "./MinicartPopUpMenu.elements";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
 const MinicartPopUpMenu = ({ onItemClick }) => {
-  const dispatch = useDispatch();
-  const { cart, total, activeCurrency } = useSelector((state) => state.root);
+  const dispatch = useAppDispatch();
+  const { cart, total, activeCurrency } = useAppSelector((state) => state.root);
 
   const handleAmount = (item, increase) => {
     if (increase) {

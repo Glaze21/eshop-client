@@ -5,10 +5,6 @@ import { ListItem } from "./Cart.elements";
 const CartItem = ({ item, price, onHandleAmount, onSetActiveAttribute }) => {
   const [currentImg, setCurrentImg] = useState(0);
 
-  const handleAmount = (increase) => {
-    onHandleAmount(item, increase);
-  };
-
   const setActiveAttribute = (name, value) => {
     onSetActiveAttribute(item, name, value);
   };
@@ -16,7 +12,7 @@ const CartItem = ({ item, price, onHandleAmount, onSetActiveAttribute }) => {
   const handleImgChange = (next) => {
     if (next && currentImg + 1 < item.gallery.length) {
       setCurrentImg(currentImg + 1);
-    } else if (!next && currentImg > 0) {
+    } else {
       setCurrentImg(currentImg - 1);
     }
   };
@@ -48,13 +44,13 @@ const CartItem = ({ item, price, onHandleAmount, onSetActiveAttribute }) => {
           <div className="amount-container">
             <img
               src="/plus-square.svg"
-              onClick={() => handleAmount(true)}
+              onClick={() => onHandleAmount(item, true)}
               alt="+"
             />
             <p>{item.amount}</p>
             <img
               src="/minus-square.svg"
-              onClick={() => handleAmount(false)}
+              onClick={() => onHandleAmount(item, false)}
               alt="-"
             />
           </div>

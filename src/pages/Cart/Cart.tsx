@@ -1,6 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Container, List } from "./Cart.elements";
+import { List } from "./Cart.elements";
 import {
   addToCart,
   removeFromCart,
@@ -9,18 +8,14 @@ import {
 import CartItem from "./CartItem";
 import getCurrencySign from "../../util/currencies";
 import getPriceAmount from "../../util/amounts";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
 const Cart = () => {
-  const dispatch = useDispatch();
-  const { cart, activeCurrency } = useSelector((state) => state.root);
+  const dispatch = useAppDispatch();
+  const { cart, activeCurrency } = useAppSelector((state) => state.root);
 
-  const handleAmount = (item, increase) => {
-    if (increase) {
-      dispatch(addToCart(item));
-    } else {
-      dispatch(removeFromCart(item));
-    }
-  };
+  const handleAmount = (item, increase) =>
+    dispatch(increase ? addToCart(item) : removeFromCart(item));
 
   const setActiveAttribute = (item, name, value) => {
     let newItem = {
@@ -31,7 +26,7 @@ const Cart = () => {
   };
 
   return (
-    <Container>
+    <React.Fragment>
       <div>
         <p className="title">Cart</p>
         <List>
@@ -49,7 +44,7 @@ const Cart = () => {
           ))}
         </List>
       </div>
-    </Container>
+    </React.Fragment>
   );
 };
 

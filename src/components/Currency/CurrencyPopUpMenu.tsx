@@ -1,14 +1,13 @@
-import React from "react";
 import { Container, List, ListItem } from "./CurrencyPopUpMenu.elements";
-import { useDispatch, useSelector } from "react-redux";
 import { setCurrency } from "../../redux/actions";
 import getCurrencySign from "../../util/currencies";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
 const CurrencyPopUpMenu = ({ onItemClick }) => {
-  const dispatch = useDispatch();
-  const currencies = useSelector((state) => state.root.currencies);
+  const dispatch = useAppDispatch();
+  const currencies = useAppSelector((state: any) => state.root.currencies);
 
-  const handleClick = (currency) => {
+  const handleClick = (currency: string): void => {
     dispatch(setCurrency(currency));
     onItemClick();
   };
