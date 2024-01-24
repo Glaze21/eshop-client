@@ -28,8 +28,12 @@ export const Category = styled.p`
     color: #1d1f22;
 `;
 
-export const CardContainer = styled.div.attrs((props: any) => ({
-    instock: props.instock,
+interface CardContainerProps {
+    inStock: string;
+}
+
+export const CardContainer = styled.div.attrs<CardContainerProps>((props) => ({
+    inStock: props.inStock,
 }))`
     display: flex;
     position: relative;
@@ -42,7 +46,7 @@ export const CardContainer = styled.div.attrs((props: any) => ({
         padding: 25px;
         text-align: start;
         cursor: pointer;
-        opacity: ${(props) => props.instock === 'false' && 0.5};
+        opacity: ${(props) => props.inStock === 'false' && 0.5};
 
         .name {
             margin: 0 0 0;

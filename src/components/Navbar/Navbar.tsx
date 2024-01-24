@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Nav, NavBtn, NavMenu, NavLogo, CurrencyContainer, CartContainer, ModalBackdrop } from './Navbar.elements';
-import { setAllCurrencies, setAllCategories, setCategory, getAllCurrencies } from '../../redux/actions';
+import { getAllCurrencies } from '../../redux/actions';
 import CurrencyPopUpMenu from '../Currency/CurrencyPopUpMenu';
 import MinicartPopUpMenu from '../Minicart/MinicartPopUpMenu';
 import getCurrencySign from '../../util/currencies';
@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const Header = () => {
     const dispatch = useAppDispatch();
-    const { categories, activeCategory, activeCurrency, cart } = useAppSelector((state) => state.root);
+    const { categories, activeCategory, activeCurrency, cart } = useAppSelector((state) => state.app);
 
     const [currencyPopUpMenu, setCurrencyPopUpMenu] = useState(false);
     const [minicartPopUpMenu, setMinicartPopUpMenu] = useState(false);
@@ -17,7 +17,7 @@ const Header = () => {
 
     useEffect(() => {
         dispatch(getAllCurrencies());
-        dispatch(setAllCategories());
+        //dispatch(setAllCategories());
     }, [dispatch]);
 
     const toggleCurrencyPopUpMenu = () => {
@@ -31,7 +31,7 @@ const Header = () => {
     };
 
     const handleChangeCategory = (category) => {
-        dispatch(setCategory(category));
+        //dispatch(setCategory(category));
     };
 
     return (
@@ -58,7 +58,7 @@ const Header = () => {
                         {getCurrencySign(activeCurrency) + ' ' + activeCurrency}
                         <img src="/arrow.svg" alt="" />
                     </CurrencyContainer>
-                    <CartContainer onClick={toggleMinicartPopUpMenu} active={minicartPopUpMenu.toString()}>
+                    <CartContainer onClick={toggleMinicartPopUpMenu}>
                         <img src="/empty-cart.svg" alt="cart" />
                         {cart.length > 0 && <p key={cart[0].id}>{getCartQuantity(cart)}</p>}
                     </CartContainer>

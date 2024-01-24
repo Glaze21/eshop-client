@@ -1,9 +1,10 @@
 {
-  "compilerOptions": {
-    "jsx": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "@/root/*": ["./*"]
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+        "baseUrl": ".",
+        "paths": {
+            "@/root/*": ["./*"]
+        }
     }
-  }
 }
